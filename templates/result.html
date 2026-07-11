@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CVision - Analysis</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family:'Inter',sans-serif;
+            background:#020617;
+        }
+
+    </style>
+
+</head>
+
+<body class="text-white overflow-x-hidden">
+
+<!-- Background -->
+
+<div class="fixed inset-0 -z-10">
+
+    <div class="absolute -top-32 -left-24 w-96 h-96 bg-indigo-700 rounded-full blur-[180px] opacity-20"></div>
+
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-700 rounded-full blur-[180px] opacity-20"></div>
+
+</div>
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+<!-- Header -->
+
+<div class="flex justify-between items-center mb-10">
+
+<div>
+
+<h1 class="text-5xl font-extrabold">
+
+CVision
+
+</h1>
+
+<p class="text-indigo-400 mt-2">
+
+AI-powered Resume Analysis
+
+</p>
+
+</div>
+
+<a href="/">
+
+<button
+class="px-6 py-3 rounded-xl
+bg-white/10
+backdrop-blur-xl
+border border-white/10
+hover:bg-white/20
+transition">
+
+← Analyze Another
+
+</button>
+
+</a>
+
+</div>
+
+<!-- Score Card -->
+
+<div
+class="bg-white/5
+backdrop-blur-2xl
+border border-white/10
+rounded-3xl
+p-10
+shadow-2xl">
+
+<div class="text-center">
+
+<p class="uppercase tracking-[8px] text-slate-400">
+
+ATS SCORE
+
+</p>
+
+<h2 class="text-8xl font-extrabold mt-5">
+
+{{ analysis["ats_score"] }}
+
+</h2>
+
+{% if analysis["ats_score"] >= 90 %}
+
+<p class="text-emerald-400 text-xl mt-4">
+
+Excellent Resume 🚀
+
+</p>
+
+{% elif analysis["ats_score"] >= 75 %}
+
+<p class="text-yellow-400 text-xl mt-4">
+
+Good Resume 👍
+
+</p>
+
+{% else %}
+
+<p class="text-red-400 text-xl mt-4">
+
+Needs Improvement
+
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- Dashboard -->
+
+<div class="grid lg:grid-cols-2 gap-8 mt-8">
+
+<!-- Summary -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold mb-5">
+
+📄 Professional Summary
+
+</h2>
+
+<p class="text-slate-300 leading-8">
+
+{{ analysis["summary"] }}
+
+</p>
+
+</div>
+
+<!-- Score Breakdown -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold mb-6">
+
+📊 Section Scores
+
+</h2>
+
+<div class="space-y-6">
+
+<!-- Technical -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Technical Skills</span>
+
+<span>{{ analysis["section_scores"]["technical_skills"] }}/20</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['technical_skills']/20*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Projects -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Projects</span>
+
+<span>{{ analysis["section_scores"]["projects"] }}/25</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['projects']/25*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Experience -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Experience</span>
+
+<span>{{ analysis["section_scores"]["experience"] }}/20</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['experience']/20*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Education -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Education</span>
+
+<span>{{ analysis["section_scores"]["education"] }}/10</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['education']/10*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+<!-- Formatting -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Formatting</span>
+
+<span>{{ analysis["section_scores"]["formatting"] }}/10</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['formatting']/10*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Keywords -->
+
+<div>
+
+<div class="flex justify-between mb-2">
+
+<span>Keyword Optimization</span>
+
+<span>{{ analysis["section_scores"]["keyword_optimization"] }}/15</span>
+
+</div>
+
+<div class="w-full bg-slate-700 rounded-full h-3">
+
+<div
+class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
+style="width:{{ (analysis['section_scores']['keyword_optimization']/15*100)|round(0) }}%;">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Strengths -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-emerald-500/20
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold text-emerald-400 mb-6">
+
+✅ Strengths
+
+</h2>
+
+<ul class="space-y-4 text-slate-300">
+
+{% for strength in analysis["strengths"] %}
+
+<li class="flex gap-3">
+
+<span class="text-emerald-400">✔</span>
+
+<span>{{ strength }}</span>
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<!-- Weaknesses -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-red-500/20
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold text-red-400 mb-6">
+
+⚠ Weaknesses
+
+</h2>
+
+<ul class="space-y-4 text-slate-300">
+
+{% for weakness in analysis["weaknesses"] %}
+
+<li class="flex gap-3">
+
+<span class="text-red-400">•</span>
+
+<span>{{ weakness }}</span>
+
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<!-- Missing Skills -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold mb-6">
+
+🧠 Missing Skills
+
+</h2>
+
+<div class="flex flex-wrap gap-3">
+
+{% for skill in analysis["missing_skills"] %}
+
+<span
+class="bg-slate-800
+border border-slate-700
+px-4
+py-2
+rounded-full">
+
+{{ skill }}
+
+</span>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<!-- Roles -->
+
+<div
+class="bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-2xl font-bold mb-6">
+
+💼 Recommended Roles
+
+</h2>
+
+<div class="flex flex-wrap gap-3">
+
+{% for role in analysis["recommended_roles"] %}
+
+<span
+class="bg-gradient-to-r
+from-indigo-500
+to-purple-500
+px-4
+py-2
+rounded-full">
+
+{{ role }}
+
+</span>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Suggestions -->
+
+<div
+class="mt-8
+bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-3xl font-bold mb-6">
+
+💡 Improvement Suggestions
+
+</h2>
+
+<ul class="space-y-4 text-slate-300">
+
+{% for suggestion in analysis["suggestions"] %}
+
+<li>• {{ suggestion }}</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<!-- Interview -->
+
+<div
+class="mt-8
+bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-3xl
+p-8">
+
+<h2 class="text-3xl font-bold mb-6">
+
+🎤 Interview Questions
+
+</h2>
+
+<ol class="list-decimal ml-6 space-y-4 text-slate-300">
+
+{% for question in analysis["interview_questions"] %}
+
+<li>{{ question }}</li>
+
+{% endfor %}
+
+</ol>
+
+</div>
+
+<!-- Footer Buttons -->
+
+<div class="flex flex-col md:flex-row justify-center gap-4 mt-10">
+
+<a href="/">
+
+<button
+class="px-8 py-4 rounded-2xl
+bg-gradient-to-r
+from-indigo-500
+via-violet-500
+to-fuchsia-500
+hover:scale-105
+transition
+font-semibold">
+
+🚀 Analyze Another Resume
+
+</button>
+
+</a>
+
+<button
+onclick="window.print()"
+class="px-8 py-4 rounded-2xl
+bg-white/10
+border border-white/10
+hover:bg-white/20
+transition
+font-semibold">
+
+📄 Download Report
+
+</button>
+
+</div>
+
+<p class="text-center text-slate-500 text-sm mt-10">
+
+Powered by Flask • Google Gemini • PyMuPDF
+
+</p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CVision</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+
+    <style>
+
+        body{
+            font-family:'Inter',sans-serif;
+            background:#020617;
+        }
+
+    </style>
+
+</head>
+
+<body class="text-white overflow-x-hidden">
+
+<!-- Background -->
+
+<div class="fixed inset-0 -z-10 overflow-hidden">
+
+<div class="absolute -top-32 -left-32 w-[420px] h-[420px] bg-indigo-700 rounded-full blur-[180px] opacity-20"></div>
+
+<div class="absolute bottom-0 right-0 w-[420px] h-[420px] bg-purple-700 rounded-full blur-[180px] opacity-20"></div>
+
+</div>
+
+<div class="min-h-screen flex items-center justify-center px-6 py-16">
+
+<div class="w-full max-w-4xl">
+
+<!-- Logo -->
+
+<div class="text-center">
+
+<div class="mx-auto
+w-24
+h-24
+rounded-3xl
+bg-white/10
+backdrop-blur-xl
+border
+border-white/20
+flex
+items-center
+justify-center
+text-4xl
+font-extrabold
+shadow-[0_0_40px_rgba(99,102,241,.35)]">
+
+CV
+
+</div>
+
+<h1 class="text-6xl font-extrabold mt-8">
+
+CVision
+
+</h1>
+
+<p class="text-indigo-400 text-xl mt-3">
+
+Professional Resume Intelligence
+
+</p>
+
+<p class="text-slate-400 max-w-2xl mx-auto mt-6 leading-8">
+
+Upload your resume and receive an instant ATS score,
+AI-powered feedback, personalized improvements,
+career recommendations and interview preparation.
+
+</p>
+
+</div>
+
+<!-- Upload Card -->
+
+<div class="mt-12
+bg-white/5
+backdrop-blur-2xl
+border
+border-white/10
+rounded-3xl
+p-10
+shadow-2xl">
+
+<form
+id="resumeForm"
+action="/upload"
+method="POST"
+enctype="multipart/form-data">
+
+<label
+id="drop-area"
+for="resume"
+class="block
+bg-white/5
+border-2
+border-dashed
+border-white/20
+rounded-2xl
+p-14
+cursor-pointer
+hover:border-indigo-400
+hover:bg-white/10
+transition
+duration-300">
+
+<div class="text-center">
+
+<div class="text-6xl">
+
+📄
+
+</div>
+
+<h2 class="text-3xl font-bold mt-6">
+
+Drag & Drop Resume
+
+</h2>
+
+<p class="text-slate-400 mt-3">
+
+or click to browse
+
+</p>
+
+<p class="text-sm text-slate-500 mt-2">
+
+PDF files only
+
+</p>
+
+</div>
+
+</label>
+
+<input
+id="resume"
+type="file"
+name="resume"
+accept=".pdf"
+required
+class="hidden">
+
+<p
+id="filename"
+class="text-center text-indigo-400 mt-6 font-medium">
+
+No file selected
+
+</p>
+
+<div class="text-center mt-8">
+
+<button
+type="submit"
+class="px-10
+py-4
+rounded-2xl
+text-lg
+font-semibold
+bg-gradient-to-r
+from-indigo-500
+via-violet-500
+to-fuchsia-500
+hover:scale-105
+hover:shadow-[0_0_40px_rgba(139,92,246,.5)]
+transition">
+
+Analyze Resume
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+<!-- Features -->
+
+<div class="grid md:grid-cols-3 gap-6 mt-10">
+
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+
+<div class="text-4xl">
+
+⭐
+
+</div>
+
+<h3 class="mt-4 text-xl font-semibold">
+
+ATS Analysis
+
+</h3>
+
+<p class="text-slate-400 mt-2 text-sm">
+
+Professional ATS evaluation
+
+</p>
+
+</div>
+
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+
+<div class="text-4xl">
+
+💼
+
+</div>
+
+<h3 class="mt-4 text-xl font-semibold">
+
+Career Insights
+
+</h3>
+
+<p class="text-slate-400 mt-2 text-sm">
+
+Missing skills & job recommendations
+
+</p>
+
+</div>
+
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+
+<div class="text-4xl">
+
+🎤
+
+</div>
+
+<h3 class="mt-4 text-xl font-semibold">
+
+Interview Prep
+
+</h3>
+
+<p class="text-slate-400 mt-2 text-sm">
+
+AI generated interview questions
+
+</p>
+
+</div>
+
+</div>
+<p class="text-center text-slate-500 mt-10 text-sm">
+
+Powered by Google Gemini AI • Built with Flask
+
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("resume");
+const fileName = document.getElementById("filename");
+
+
+// Click Upload
+fileInput.addEventListener("change", () => {
+
+    if(fileInput.files.length > 0){
+
+        fileName.innerHTML =
+        "✅ " + fileInput.files[0].name;
+
+    }
+
+});
+
+
+// Prevent browser opening the PDF
+["dragenter","dragover","dragleave","drop"].forEach(eventName=>{
+
+    dropArea.addEventListener(eventName,function(e){
+
+        e.preventDefault();
+        e.stopPropagation();
+
+    });
+
+});
+
+
+// Highlight while dragging
+["dragenter","dragover"].forEach(eventName=>{
+
+    dropArea.addEventListener(eventName,function(){
+
+        dropArea.classList.add(
+            "border-indigo-400",
+            "bg-white/10",
+            "scale-[1.02]"
+        );
+
+    });
+
+});
+
+
+// Remove Highlight
+["dragleave","drop"].forEach(eventName=>{
+
+    dropArea.addEventListener(eventName,function(){
+
+        dropArea.classList.remove(
+            "border-indigo-400",
+            "bg-white/10",
+            "scale-[1.02]"
+        );
+
+    });
+
+});
+
+
+// Handle Drop
+dropArea.addEventListener("drop",function(e){
+
+    const files = e.dataTransfer.files;
+
+    if(files.length > 0){
+
+        // Only allow PDFs
+        if(files[0].type !== "application/pdf"){
+
+            fileName.innerHTML =
+            "❌ Please upload a PDF file.";
+
+            return;
+
+        }
+
+        const dataTransfer = new DataTransfer();
+
+        dataTransfer.items.add(files[0]);
+
+        fileInput.files = dataTransfer.files;
+
+        fileName.innerHTML =
+        "✅ " + files[0].name;
+
+    }
+
+});
+
+
+// Small loading effect
+document.querySelector("form").addEventListener("submit",function(){
+
+    document.querySelector("button").innerHTML =
+    "Analyzing...";
+
+    document.querySelector("button").disabled = true;
+
+});
+
+          // Press Enter to Analyze
+document.addEventListener("keydown", function(event){
+
+    if(event.key === "Enter" && fileInput.files.length > 0){
+
+        event.preventDefault();
+
+        document.getElementById("resumeForm").requestSubmit();
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
