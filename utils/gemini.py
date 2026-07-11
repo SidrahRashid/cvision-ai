@@ -34,8 +34,11 @@ Resume:
 {resume_text}
 """
 
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    import os
 
+    MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+
+    model = genai.GenerativeModel(MODEL_NAME)
     response = model.generate_content(full_prompt)
 
     response_text = response.text.strip()
