@@ -2,30 +2,33 @@ import os
 import json
 from datetime import datetime
 
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
 from utils.prompts import PROMPT
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
 
 def analyze_resume(resume_text):
 
-    # Get current month and year
     current_date = datetime.now().strftime("%B %Y")
 
-    # Build prompt
     full_prompt = f"""
 Today's date is {current_date}.
 
 When evaluating the resume:
-- Treat today's date as the reference date.
-- Do NOT mark work experience before today's date as a future date.
-- Do NOT incorrectly flag valid employment dates.
-- Evaluate the resume based on the current date.
+
+- Treat today's date as the reference.
+- Never mark previous employment as future experience.
+- Do not invent weaknesses.
+- Only identify genuine issues.
+- Return ONLY valid JSON.
+- Do not wrap the JSON inside markdown.
 
 {PROMPT}
 
@@ -34,85 +37,68 @@ Resume:
 {resume_text}
 """
 
-    import os
-
-    MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-
-    model = genai.GenerativeModel(MODEL_NAME)
-    response = model.generate_content(full_prompt)
-
-    response_text = response.text.strip()
-
-    print("\n========== GEMINI RESPONSE ==========\n")
-    print(response_text)
-    print("\n=====================================\n")
-
-    # Remove Markdown code fences if Gemini returns them
-    if response_text.startswith("```json"):
-        response_text = response_text.replace("```json", "", 1)
-
-    if response_text.startswith("```"):
-        response_text = response_text.replace("```", "", 1)
-
-    if response_text.endswith("```"):
-        response_text = response_text[:-3]
-
-    response_text = response_text.strip()
-
     try:
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=full_prompt
+        )
+
+        response_text = response.text.strip()
+
+        print("\n========== GEMINI RESPONSE ==========\n")
+        print(response_text)
+        print("\n=====================================\n")
+
+        if response_text.startswith("```json"):
+            response_text = response_text.replace("```json", "", 1)
+
+        if response_text.startswith("```"):
+            response_text = response_text.replace("```", "", 1)
+
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+
+        response_text = response_text.strip()
 
         analysis = json.loads(response_text)
 
         return analysis
 
-    except json.JSONDecodeError as e:
-
-        print("\nJSON PARSE ERROR")
-        print(e)
-        print("\nRAW RESPONSE:\n")
-        print(response_text)
-
-        return {
-            "ats_score": 0,
-            "section_scores": {
-                "technical_skills": 0,
-                "projects": 0,
-                "experience": 0,
-                "education": 0,
-                "formatting": 0,
-                "keyword_optimization": 0
-            },
-            "summary": "The AI returned an invalid response. Please try again.",
-            "strengths": [],
-            "weaknesses": [],
-            "missing_skills": [],
-            "missing_keywords": [],
-            "suggestions": [],
-            "recommended_roles": [],
-            "interview_questions": []
-        }
-
     except Exception as e:
 
-        print("\nUNEXPECTED ERROR")
+        print("\nERROR FROM GEMINI\n")
         print(e)
 
         return {
+
             "ats_score": 0,
+
             "section_scores": {
+
                 "technical_skills": 0,
                 "projects": 0,
                 "experience": 0,
                 "education": 0,
                 "formatting": 0,
                 "keyword_optimization": 0
+
             },
-            "summary": "Something went wrong while analyzing the resume.",
+
+            "summary": "The AI service is temporarily unavailable. Please try again later.",
+
             "strengths": [],
+
             "weaknesses": [],
+
             "missing_skills": [],
+
             "missing_keywords": [],
+
             "suggestions": [],
+
             "recommended_roles": [],
+
             "interview_questions": []
+
         }
