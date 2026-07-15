@@ -24,32 +24,6 @@ CVision is an intelligent resume analysis platform that evaluates resumes using 
 
 ---
 
-## 🖼️ Screenshots
-
-### Home Page
-
-> Add screenshot here
-
-![Homepage](screenshots/homepage.png)
-
----
-
-### Resume Analysis
-
-> Add screenshot here
-
-![Analysis](screenshots/analysis.png)
-
----
-
-### PDF Report
-
-> Add screenshot here
-
-![PDF Report](screenshots/pdf-report.png)
-
----
-
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -203,8 +177,7 @@ http://127.0.0.1:5000
 > Add your deployed Render URL here
 
 ```
-https://cvision-ai-1.onrender.com```
-
+https://cvision-ai-1.onrender.com
 ---
 
 ## 💻 GitHub Repository
