@@ -1,577 +1,555 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta charset="UTF-8">
+  <title>CVision | Resume Analysis</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="CVision is an AI-powered resume analyzer that evaluates resumes using Google Gemini."
+  />
+  <meta name="theme-color" content="#020617" />
 
-    <title>CVision - Analysis</title>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="{{ url_for('static', filename='favicon.svg') }}"
+  />
 
-    <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <style>
+    body {
+      font-family: "Inter", sans-serif;
+      background: #020617;
+      color: white;
+      overflow-x: hidden;
+    }
 
-        body{
-            font-family:'Inter',sans-serif;
-            background:#020617;
-        }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
-    </style>
+    .card {
+      border-radius: 28px;
+      transition: 0.35s;
+    }
 
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 0 50px rgba(99, 102, 241, 0.18);
+    }
+
+    .metric {
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 9px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3730a3;
+      border-radius: 20px;
+    }
+  </style>
 </head>
 
-<body class="text-white overflow-x-hidden">
-
-<!-- Background -->
-
-<div class="fixed inset-0 -z-10">
-
-    <div class="absolute -top-32 -left-24 w-96 h-96 bg-indigo-700 rounded-full blur-[180px] opacity-20"></div>
-
-    <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-700 rounded-full blur-[180px] opacity-20"></div>
-
-</div>
-
-<div class="max-w-7xl mx-auto px-6 py-10">
-
-<!-- Header -->
-
-<div class="flex justify-between items-center mb-10">
-
-<div>
-
-<h1 class="text-5xl font-extrabold">
-
-CVision
-
-</h1>
-
-<p class="text-indigo-400 mt-2">
-
-AI-powered Resume Analysis
-
-</p>
-
-</div>
-
-<a href="/">
-
-<button
-class="px-6 py-3 rounded-xl
-bg-white/10
-backdrop-blur-xl
-border border-white/10
-hover:bg-white/20
-transition">
-
-← Analyze Another
-
-</button>
-
-</a>
-
-</div>
-
-<!-- Score Card -->
-
-<div
-class="bg-white/5
-backdrop-blur-2xl
-border border-white/10
-rounded-3xl
-p-10
-shadow-2xl">
-
-<div class="text-center">
-
-<p class="uppercase tracking-[8px] text-slate-400">
-
-ATS SCORE
-
-</p>
-
-<h2 class="text-8xl font-extrabold mt-5">
-
-{{ analysis["ats_score"] }}
-
-</h2>
-
-{% if analysis["ats_score"] >= 90 %}
-
-<p class="text-emerald-400 text-xl mt-4">
-
-Excellent Resume 🚀
-
-</p>
-
-{% elif analysis["ats_score"] >= 75 %}
-
-<p class="text-yellow-400 text-xl mt-4">
-
-Good Resume 👍
-
-</p>
-
-{% else %}
-
-<p class="text-red-400 text-xl mt-4">
-
-Needs Improvement
-
-</p>
-
-{% endif %}
-
-</div>
-
-</div>
-
-<!-- Dashboard -->
-
-<div class="grid lg:grid-cols-2 gap-8 mt-8">
-
-<!-- Summary -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold mb-5">
-
-📄 Professional Summary
-
-</h2>
-
-<p class="text-slate-300 leading-8">
-
-{{ analysis["summary"] }}
-
-</p>
-
-</div>
-
-<!-- Score Breakdown -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold mb-6">
-
-📊 Section Scores
-
-</h2>
-
-<div class="space-y-6">
-
-<!-- Technical -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Technical Skills</span>
-
-<span>{{ analysis["section_scores"]["technical_skills"] }}/20</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['technical_skills']/20*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Projects -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Projects</span>
-
-<span>{{ analysis["section_scores"]["projects"] }}/25</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['projects']/25*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Experience -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Experience</span>
-
-<span>{{ analysis["section_scores"]["experience"] }}/20</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['experience']/20*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Education -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Education</span>
-
-<span>{{ analysis["section_scores"]["education"] }}/10</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['education']/10*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-<!-- Formatting -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Formatting</span>
-
-<span>{{ analysis["section_scores"]["formatting"] }}/10</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['formatting']/10*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Keywords -->
-
-<div>
-
-<div class="flex justify-between mb-2">
-
-<span>Keyword Optimization</span>
-
-<span>{{ analysis["section_scores"]["keyword_optimization"] }}/15</span>
-
-</div>
-
-<div class="w-full bg-slate-700 rounded-full h-3">
-
-<div
-class="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full"
-style="width:{{ (analysis['section_scores']['keyword_optimization']/15*100)|round(0) }}%;">
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Strengths -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-emerald-500/20
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold text-emerald-400 mb-6">
-
-✅ Strengths
-
-</h2>
-
-<ul class="space-y-4 text-slate-300">
-
-{% for strength in analysis["strengths"] %}
-
-<li class="flex gap-3">
-
-<span class="text-emerald-400">✔</span>
-
-<span>{{ strength }}</span>
-
-</li>
-
-{% endfor %}
-
-</ul>
-
-</div>
-
-<!-- Weaknesses -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-red-500/20
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold text-red-400 mb-6">
-
-⚠ Weaknesses
-
-</h2>
-
-<ul class="space-y-4 text-slate-300">
-
-{% for weakness in analysis["weaknesses"] %}
-
-<li class="flex gap-3">
-
-<span class="text-red-400">•</span>
-
-<span>{{ weakness }}</span>
-
-</li>
-
-{% endfor %}
-
-</ul>
-
-</div>
-
-<!-- Missing Skills -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold mb-6">
-
-🧠 Missing Skills
-
-</h2>
-
-<div class="flex flex-wrap gap-3">
-
-{% for skill in analysis["missing_skills"] %}
-
-<span
-class="bg-slate-800
-border border-slate-700
-px-4
-py-2
-rounded-full">
-
-{{ skill }}
-
-</span>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-<!-- Roles -->
-
-<div
-class="bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-2xl font-bold mb-6">
-
-💼 Recommended Roles
-
-</h2>
-
-<div class="flex flex-wrap gap-3">
-
-{% for role in analysis["recommended_roles"] %}
-
-<span
-class="bg-gradient-to-r
-from-indigo-500
-to-purple-500
-px-4
-py-2
-rounded-full">
-
-{{ role }}
-
-</span>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Suggestions -->
-
-<div
-class="mt-8
-bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-3xl font-bold mb-6">
-
-💡 Improvement Suggestions
-
-</h2>
-
-<ul class="space-y-4 text-slate-300">
-
-{% for suggestion in analysis["suggestions"] %}
-
-<li>• {{ suggestion }}</li>
-
-{% endfor %}
-
-</ul>
-
-</div>
-
-<!-- Interview -->
-
-<div
-class="mt-8
-bg-white/5
-backdrop-blur-xl
-border border-white/10
-rounded-3xl
-p-8">
-
-<h2 class="text-3xl font-bold mb-6">
-
-🎤 Interview Questions
-
-</h2>
-
-<ol class="list-decimal ml-6 space-y-4 text-slate-300">
-
-{% for question in analysis["interview_questions"] %}
-
-<li>{{ question }}</li>
-
-{% endfor %}
-
-</ol>
-
-</div>
-
-<!-- Footer Buttons -->
-
-<div class="flex flex-col md:flex-row justify-center gap-4 mt-10">
-
-<a href="/">
-
-<button
-class="px-8 py-4 rounded-2xl
-bg-gradient-to-r
-from-indigo-500
-via-violet-500
-to-fuchsia-500
-hover:scale-105
-transition
-font-semibold">
-
-🚀 Analyze Another Resume
-
-</button>
-
-</a>
-
-<button
-onclick="window.print()"
-class="px-8 py-4 rounded-2xl
-bg-white/10
-border border-white/10
-hover:bg-white/20
-transition
-font-semibold">
-
-📄 Download Report
-
-</button>
-
-</div>
-
-<p class="text-center text-slate-500 text-sm mt-10">
-
-Powered by Flask • Google Gemini • PyMuPDF
-
-</p>
-
-</div>
-
+<body>
+  <!-- Background -->
+  <div class="fixed inset-0 -z-20">
+    <div class="absolute -top-44 -left-36 w-[500px] h-[500px] rounded-full bg-indigo-700/25 blur-[180px]"></div>
+    <div class="absolute top-1/2 right-0 w-[450px] h-[450px] rounded-full bg-fuchsia-700/20 blur-[180px]"></div>
+    <div class="absolute bottom-0 left-1/3 w-[420px] h-[420px] rounded-full bg-cyan-500/10 blur-[180px]"></div>
+  </div>
+
+  <!-- Main -->
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Navbar -->
+    <header class="flex items-center justify-between mb-10">
+      <div>
+        <div class="flex items-center gap-4">
+          <h1 class="text-5xl font-black tracking-tight">CVision</h1>
+          <span class="px-4 py-1 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold text-sm">
+            v2.0
+          </span>
+        </div>
+        <p class="text-slate-400 mt-2">AI Resume Intelligence Dashboard</p>
+      </div>
+
+      <div class="flex gap-4">
+        <a href="/" class="inline-block">
+          <div class="glass card px-6 py-3 rounded-xl hover:bg-white/10">
+            ← Analyze Another
+          </div>
+        </a>
+
+        <a href="/download-report" class="inline-block">
+          <div class="bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition">
+            Download Report
+          </div>
+        </a>
+      </div>
+    </header>
+
+    <!-- Top Dashboard -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-8">
+      <!-- ATS Score -->
+      <div id="scoreCard" class="glass card p-8 lg:col-span-1 flex flex-col justify-center">
+        <p class="metric">ATS SCORE</p>
+
+        <h2
+          id="atsScore"
+          data-score="{{ analysis['ats_score'] | default(0) | int }}"
+          class="text-7xl font-black mt-5"
+        >
+          0
+        </h2>
+
+        <p id="scoreMessage" class="text-slate-400 text-lg mt-3">Loading...</p>
+
+        <div class="mt-6 h-2 bg-slate-700 rounded-full overflow-hidden">
+          <div
+            id="scoreFill"
+            class="h-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 rounded-full"
+            style="width: 0%;"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Resume Match -->
+      <div class="glass card p-8 lg:col-span-2">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <p class="metric">AI ANALYSIS</p>
+            <h2 class="text-3xl font-bold mt-2">Resume Overview</h2>
+          </div>
+
+          {% if analysis.get("job_match_score") is not none %}
+          <div class="text-right">
+            <p class="metric">MATCH SCORE</p>
+            <div class="text-5xl font-black text-indigo-400">
+              {{ analysis["job_match_score"] }}%
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Summary -->
+          <div>
+            <h3 class="text-xl font-semibold mb-4">Professional Summary</h3>
+            <p class="text-slate-300 leading-8">
+              {{ analysis["summary"] }}
+            </p>
+          </div>
+
+          <!-- Quick Metrics -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="glass rounded-2xl p-5">
+              <p class="metric">Strengths</p>
+              <h2 class="text-4xl font-black mt-3 text-emerald-400">
+                {{ analysis["strengths"] | length }}
+              </h2>
+            </div>
+
+            <div class="glass rounded-2xl p-5">
+              <p class="metric">Weaknesses</p>
+              <h2 class="text-4xl font-black mt-3 text-red-400">
+                {{ analysis["weaknesses"] | length }}
+              </h2>
+            </div>
+
+            <div class="glass rounded-2xl p-5">
+              <p class="metric">Missing Skills</p>
+              <h2 class="text-4xl font-black mt-3 text-yellow-400">
+                {{ analysis["missing_skills"] | length }}
+              </h2>
+            </div>
+
+            <div class="glass rounded-2xl p-5">
+              <p class="metric">Suggested Roles</p>
+              <h2 class="text-4xl font-black mt-3 text-indigo-400">
+                {{ analysis["recommended_roles"] | length }}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        {% if analysis.get("job_match_summary") %}
+        <div class="mt-8 rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-6">
+          <h3 class="font-bold text-indigo-300 mb-3">🎯 Resume Match Analysis</h3>
+          <p class="text-slate-300 leading-8">
+            {{ analysis["job_match_summary"] }}
+          </p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- LEFT COLUMN START -->
+      <div class="space-y-6">
+        <!-- SECTION SCORES -->
+        <div class="glass card p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="metric">Resume Breakdown</p>
+              <h2 class="text-2xl font-bold mt-1">Section Scores</h2>
+            </div>
+            <div class="text-right">
+              <span class="text-slate-400 text-sm">AI Evaluation</span>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Technical Skills</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["technical_skills"] }}/20
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['technical_skills'] / 20 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Projects</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["projects"] }}/25
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['projects'] / 25 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Experience</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["experience"] }}/20
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['experience'] / 20 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Education</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["education"] }}/10
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['education'] / 10 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Formatting</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["formatting"] }}/10
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['formatting'] / 10 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-2">
+                <span>Keyword Optimization</span>
+                <span class="text-slate-400">
+                  {{ analysis["section_scores"]["keyword_optimization"] }}/15
+                </span>
+              </div>
+              <div class="h-3 rounded-full bg-slate-700 overflow-hidden">
+                <div
+                  class="score-bar h-full rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500"
+                  data-width="{{ (analysis['section_scores']['keyword_optimization'] / 15 * 100) | round(0) }}"
+                  style="width: 0%;"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STRENGTHS -->
+        <div class="glass card p-7 border border-emerald-500/20">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-2xl font-bold text-emerald-400">✅ Strengths</h2>
+            <span class="text-sm text-slate-400">
+              {{ analysis["strengths"] | length }} Found
+            </span>
+          </div>
+
+          <ul class="space-y-4">
+            {% for strength in analysis["strengths"] %}
+            <li class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                ✓
+              </div>
+              <span class="text-slate-300 leading-7">{{ strength }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="space-y-6">
+        <!-- WEAKNESSES -->
+        <div class="glass card p-7 border border-red-500/20">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-2xl font-bold text-red-400">⚠ Weaknesses</h2>
+            <span class="text-sm text-slate-400">
+              {{ analysis["weaknesses"] | length }} Found
+            </span>
+          </div>
+
+          <ul class="space-y-4">
+            {% for weakness in analysis["weaknesses"] %}
+            <li class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">
+                !
+              </div>
+              <span class="text-slate-300 leading-7">{{ weakness }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- MISSING SKILLS -->
+        <div class="glass card p-7">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">🧠 Missing Skills</h2>
+            <span class="text-sm text-slate-400">
+              {{ analysis["missing_skills"] | length }} Skills
+            </span>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            {% for skill in analysis["missing_skills"] %}
+            <span class="px-4 py-2 rounded-full bg-slate-800 border border-slate-700 hover:border-indigo-500 transition">
+              {{ skill }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- RECOMMENDED ROLES -->
+        <div class="glass card p-7">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">💼 Recommended Roles</h2>
+            <span class="text-sm text-slate-400">
+              {{ analysis["recommended_roles"] | length }} Roles
+            </span>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            {% for role in analysis["recommended_roles"] %}
+            <span class="px-5 py-2 rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 text-white font-medium shadow-lg hover:scale-105 transition">
+              {{ role }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH SECTION -->
+    <div class="space-y-8 mt-8">
+      <!-- IMPROVEMENT SUGGESTIONS -->
+      <div class="glass card p-8">
+        <div class="flex items-center justify-between mb-7">
+          <div>
+            <p class="metric">AI Recommendations</p>
+            <h2 class="text-3xl font-bold mt-1">💡 Improvement Suggestions</h2>
+          </div>
+          <span class="px-4 py-2 rounded-full bg-indigo-500/20 text-indigo-300 text-sm">
+            Personalized
+          </span>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-5">
+          {% for suggestion in analysis["suggestions"] %}
+          <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 hover:border-indigo-500 transition">
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold">
+                {{ loop.index }}
+              </div>
+              <p class="text-slate-300 leading-7">{{ suggestion }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- INTERVIEW QUESTIONS -->
+      <div class="glass card p-8">
+        <div class="flex items-center justify-between mb-7">
+          <div>
+            <p class="metric">Interview Preparation</p>
+            <h2 class="text-3xl font-bold mt-1">🎤 Interview Questions</h2>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          {% for question in analysis["interview_questions"] %}
+          <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 hover:border-violet-500 transition">
+            <div class="flex gap-5">
+              <div class="w-10 h-10 rounded-full bg-violet-500/20 text-violet-300 flex items-center justify-center font-bold flex-shrink-0">
+                {{ loop.index }}
+              </div>
+              <p class="text-slate-300 leading-7">{{ question }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="flex flex-wrap justify-center gap-5 py-6">
+        <a href="/" class="inline-block">
+          <div class="px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 font-semibold hover:scale-105 transition">
+            🚀 Analyze Another Resume
+          </div>
+        </a>
+
+        <a href="/download-report" class="inline-block">
+          <div class="glass px-8 py-4 rounded-2xl hover:bg-white/10">
+            📄 Download PDF Report
+          </div>
+        </a>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="mt-14 border-t border-white/10 pt-10 pb-10">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div>
+            <h2 class="text-3xl font-black">
+              CVision <span class="text-indigo-400 text-lg">v2.0</span>
+            </h2>
+            <p class="text-slate-400 mt-2">AI Resume Intelligence Dashboard</p>
+          </div>
+
+          <div class="text-center md:text-right">
+            <p class="text-slate-500">
+              Built with Flask • Google Gemini • Tailwind CSS • PyMuPDF
+            </p>
+            <p class="text-slate-600 text-sm mt-2">© 2026 Sidrah Rashid</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const score = document.getElementById("atsScore");
+    const fill = document.getElementById("scoreFill");
+    const message = document.getElementById("scoreMessage");
+    const card = document.getElementById("scoreCard");
+
+    const finalScore = Math.max(0, Math.min(100, parseInt(score.dataset.score, 10) || 0));
+    let current = 0;
+
+    const counter = setInterval(() => {
+      current++;
+      score.textContent = current;
+      fill.style.width = current + "%";
+
+      if (current >= finalScore) {
+        clearInterval(counter);
+
+        if (finalScore >= 90) {
+          score.className = "text-7xl font-black mt-5 text-emerald-400";
+          message.textContent = "🌟 Excellent Resume";
+          message.className = "text-lg mt-3 text-emerald-400";
+          card.classList.add("shadow-[0_0_70px_rgba(16,185,129,.35)]");
+        } else if (finalScore >= 80) {
+          score.className = "text-7xl font-black mt-5 text-indigo-400";
+          message.textContent = "🚀 Strong Resume";
+          message.className = "text-lg mt-3 text-indigo-400";
+          card.classList.add("shadow-[0_0_70px_rgba(99,102,241,.35)]");
+        } else if (finalScore >= 70) {
+          score.className = "text-7xl font-black mt-5 text-yellow-400";
+          message.textContent = "👍 Good Resume";
+          message.className = "text-lg mt-3 text-yellow-400";
+          card.classList.add("shadow-[0_0_70px_rgba(250,204,21,.35)]");
+        } else if (finalScore >= 60) {
+          score.className = "text-7xl font-black mt-5 text-orange-400";
+          message.textContent = "⚠ Needs Improvement";
+          message.className = "text-lg mt-3 text-orange-400";
+          card.classList.add("shadow-[0_0_70px_rgba(251,146,60,.35)]");
+        } else {
+          score.className = "text-7xl font-black mt-5 text-red-400";
+          message.textContent = "❌ Major Improvements Needed";
+          message.className = "text-lg mt-3 text-red-400";
+          card.classList.add("shadow-[0_0_70px_rgba(239,68,68,.35)]");
+        }
+      }
+    }, 15);
+
+    window.addEventListener("load", () => {
+      document.querySelectorAll(".score-bar").forEach((bar, index) => {
+        const width = parseFloat(bar.dataset.width) || 0;
+        setTimeout(() => {
+          bar.style.transition = "width 1.2s cubic-bezier(.22,1,.36,1)";
+          bar.style.width = width + "%";
+        }, index * 180);
+      });
+    });
+  </script>
 </body>
-
 </html>

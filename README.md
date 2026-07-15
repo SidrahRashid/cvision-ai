@@ -1,75 +1,105 @@
-# 🚀 CVision - AI Resume Analyzer
+# 🚀 CVision
 
-CVision is an AI-powered ATS Resume Analyzer built using Flask and Google's Gemini AI. It evaluates resumes, provides an ATS score, identifies strengths and weaknesses, suggests missing skills, and recommends interview questions.
+### AI-Powered Resume Analyzer
 
----
+CVision is an intelligent resume analysis platform that evaluates resumes using Google's Gemini AI. It provides an ATS score, identifies strengths and weaknesses, suggests improvements, recommends career roles, generates interview questions, and allows users to download a professional PDF report—all within seconds.
 
-## 🌐 Live Demo
-
-https://cvision-ai-1.onrender.com/
----
-
-## 📷 Preview
-
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-more
 ---
 
 ## ✨ Features
 
-- 📄 Upload PDF Resume
-- 🤖 AI-powered Resume Analysis
-- ⭐ ATS Score
-- 📊 Section-wise Evaluation
-- 💪 Resume Strengths
-- ⚠ Weaknesses
-- 🧠 Missing Skills
-- 🔍 Missing Keywords
-- 💼 Recommended Job Roles
-- 🎤 AI-generated Interview Questions
-- 🌙 Modern Glassmorphism UI
-- 📱 Responsive Design
-- ☁️ Deployed on Render
+- 📄 Upload resumes in PDF format
+- 🤖 AI-powered resume analysis using Google Gemini
+- 📊 ATS Score (0–100)
+- 📈 Section-wise score breakdown
+- 💪 Resume strengths detection
+- ⚠️ Weakness identification
+- 🧠 Missing skills analysis
+- 💼 Career role recommendations
+- 🎤 AI-generated interview questions
+- 💡 Personalized improvement suggestions
+- 📑 Downloadable PDF report
+- 🎯 Resume vs Job Description matching (optional)
+- 📱 Responsive modern UI
 
 ---
 
-## 🛠 Tech Stack
+## 🖼️ Screenshots
+
+### Home Page
+
+> Add screenshot here
+
+![Homepage](screenshots/homepage.png)
+
+---
+
+### Resume Analysis
+
+> Add screenshot here
+
+![Analysis](screenshots/analysis.png)
+
+---
+
+### PDF Report
+
+> Add screenshot here
+
+![PDF Report](screenshots/pdf-report.png)
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
 
 - Python
 - Flask
+
+### Artificial Intelligence
+
 - Google Gemini API
-- PyMuPDF
+
+### Frontend
+
 - HTML5
 - Tailwind CSS
 - JavaScript
-- Render
+
+### PDF Processing
+
+- PyMuPDF
+- ReportLab
 
 ---
 
 ## 📂 Project Structure
 
 ```
-CVision
+CVision/
 │
 ├── app.py
 ├── requirements.txt
-├── .env
+├── README.md
+├── .gitignore
 │
-├── utils
-│   ├── gemini.py
-│   ├── pdf_reader.py
-│   └── prompts.py
-│
-├── templates
+├── templates/
 │   ├── index.html
 │   └── result.html
 │
-├── static
-│   └── style.css
+├── static/
+│   ├── favicon.svg
+│   ├── images/
+│   └── icons/
 │
-└── README.md
+├── utils/
+│   ├── gemini.py
+│   ├── pdf_reader.py
+│   ├── prompts.py
+│   └── report_generator.py
+│
+└── screenshots/
 ```
 
 ---
@@ -79,13 +109,29 @@ CVision
 Clone the repository
 
 ```bash
-git clone https://github.com/SidrahRashid/cvision-ai
+git clone https://github.com/YOUR_USERNAME/CVision.git
 ```
 
-Move into the folder
+Move into the project
 
 ```bash
-cd cvision
+cd CVision
+```
+
+Create a virtual environment
+
+Windows
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+Linux / macOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
 ```
 
 Install dependencies
@@ -94,29 +140,78 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Create a `.env` file
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the root directory.
 
 ```env
 GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-Run the application
+---
+
+## ▶️ Running the Project
+
+Start the Flask server
 
 ```bash
 python app.py
 ```
 
+Visit
+
+```
+http://127.0.0.1:5000
+```
+
 ---
 
-## 📌 Future Improvements
+## 📋 How It Works
 
-- Resume vs Job Description Matching
-- Download PDF Report
-- User Authentication
-- Resume History
-- AI Cover Letter Generator
-- Resume Templates
-- Multi-language Support
+1. Upload a resume in PDF format.
+2. (Optional) Paste a Job Description.
+3. CVision extracts text using PyMuPDF.
+4. Google Gemini analyzes the resume.
+5. ATS score and detailed insights are generated.
+6. Users can download a professional PDF report.
+
+---
+
+## 🎯 Future Improvements
+
+- Multi-page resume comparison
+- Resume templates
+- Cover letter generation
+- AI resume rewriting
+- Authentication system
+- Resume history
+- Dashboard analytics
+- Multiple language support
+
+---
+
+## 📈 Version
+
+**CVision v1.0.0**
+
+---
+
+## 🌐 Live Demo
+
+> Add your deployed Render URL here
+
+```
+https://cvision-ai-1.onrender.com```
+
+---
+
+## 💻 GitHub Repository
+
+https://github.com/SidrahRashid/cvision-ai
+```
+```
 
 ---
 
@@ -126,12 +221,23 @@ python app.py
 
 B.Sc. Data Science Student
 
-GitHub: https://github.com/SidrahRashid
+Kolkata, India
 
 LinkedIn: https://www.linkedin.com/in/sidrah-rashid/
+GitHub: https://github.com/SidrahRashid
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+---
+
+## ⭐ Support
+
+If you found this project useful, consider giving it a ⭐ on GitHub. It helps others discover the project and supports my work.
+
+---
+
+Made with ❤️ using Flask, Google Gemini AI, Tailwind CSS and PyMuPDF.

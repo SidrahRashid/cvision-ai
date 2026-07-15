@@ -3,23 +3,31 @@ import fitz
 
 def read_pdf(resume):
 
-    pdf = fitz.open(
-        stream=resume.read(),
-        filetype="pdf"
-    )
+    try:
 
-    resume_text = ""
+        pdf = fitz.open(
+            stream=resume.read(),
+            filetype="pdf"
+        )
 
-    for page in pdf:
-        resume_text += page.get_text()
+        text = ""
 
-    pdf.close()
+        for page in pdf:
 
-    # Remove empty lines
-    lines = resume_text.splitlines()
+            page_text = page.get_text()
 
-    lines = [line.strip() for line in lines if line.strip()]
+            if page_text:
 
-    resume_text = "\n".join(lines)
+                text += page_text + "\n"
 
-    return resume_text
+        pdf.close()
+
+        return text.strip()
+
+    except Exception as e:
+
+        print("\n========== PDF ERROR ==========")
+        print(e)
+        print("================================\n")
+
+        return ""
