@@ -174,8 +174,6 @@ http://127.0.0.1:5000
 
 ## 🌐 Live Demo
 
-> Add your deployed Render URL here
-
 ```
 https://cvision-ai-1.onrender.com
 ---
